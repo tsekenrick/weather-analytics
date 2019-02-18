@@ -1,6 +1,4 @@
 // function analyzeTemperature
-const fs = require('fs');
-
 function analyzeTemperature(weatherData){
     let retStr = '';
 
@@ -11,7 +9,7 @@ function analyzeTemperature(weatherData){
         const time = obj.datetime;
         const filtered = Object.entries(obj).filter((pair) => pair[0] === 'New York');
         if(count < 10){
-            filtered.map(pair => retStr += `At ${time}, the temperature in NY is ${pair[1].toPrecision(4)} (F)\n`);
+            filtered.map(pair => retStr += `At ${time}, the temperature in NY is ${pair[1].toFixed(2)} (F)\n`);
         }  
         count += 1;  
     });
@@ -20,20 +18,20 @@ function analyzeTemperature(weatherData){
     const mean = weatherData.reduce(function(acc, cur){
         return acc + cur['San Diego'];
     }, 0);
-    retStr += `\nThe mean temperature in San Diego is: ${(mean/weatherData.length).toPrecision(4)} (F)\n\n`;
+    retStr += `\nThe mean temperature in San Diego is: ${(mean/weatherData.length).toFixed(2)} (F)\n\n`;
 
     // Min/max of temp in New York
     const min = weatherData.reduce(function(acc, cur){
         return acc[0] >= cur['New York'] ? [cur['New York'], cur['datetime']] : acc;
     }, [Infinity, undefined]);
     retStr += `The coldest time in New York is ${min[1]}\n`;
-    retStr += `The lowest temperature is: ${min[0].toPrecision(3)} (F)\n`;
+    retStr += `The lowest temperature is: ${min[0].toFixed(2)} (F)\n`;
     
     const max = weatherData.reduce(function(acc, cur){
         return acc[0] <= cur['New York'] ? [cur['New York'], cur['datetime']] : acc;
     }, [-Infinity, undefined]);
     retStr += `The warmest time in New York is ${max[1]}\n`;
-    retStr += `The highest temperature is: ${max[0].toPrecision(4)} (F)\n`;
+    retStr += `The highest temperature is: ${max[0].toFixed(2)} (F)\n`;
     
     // Top 10 warmest and coldest mean temperatures
     const tempSums = weatherData.reduce(function(acc, cur){
@@ -62,7 +60,7 @@ function analyzeTemperature(weatherData){
         // find location in tempSums matching temp
         if(count < 10){
             const location = Object.keys(tempSums).find(key => tempSums[key] === temp);
-            retStr += `${location}: ${temp.toPrecision(4)} (F)\n`;
+            retStr += `${location}: ${temp.toFixed(2)} (F)\n`;
         }
         count += 1;
     });
@@ -75,7 +73,7 @@ function analyzeTemperature(weatherData){
         // find location in tempSums matching temp
         if(count < 10){
             const location = Object.keys(tempSums).find(key => tempSums[key] === temp);
-            retStr += `${location}: ${temp.toPrecision(4)} (F)\n`;
+            retStr += `${location}: ${temp.toFixed(2)} (F)\n`;
         }
         count += 1;
     });
@@ -90,7 +88,7 @@ function analyzeTemperature(weatherData){
         return acc;
     }, [0, 0]);
 
-    retStr += `\nThe average temperature over spring 2013 in New York is: ${(sprTempSum[0]/sprTempSum[1]).toPrecision(4)} (F) \n`;
+    retStr += `\nThe average temperature over spring 2013 in New York is: ${(sprTempSum[0]/sprTempSum[1]).toFixed(2)} (F) \n`;
 
     return retStr;
 }
