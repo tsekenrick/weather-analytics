@@ -17,8 +17,9 @@ function generateReport(weatherData, variable, unit){
             return ret;
         });
     }
-    // Top 10 warmest and coldest mean temperatures
-    const tempSums = weatherData.reduce(function(acc, cur){
+
+    // Top 10 highest/lowest
+    const sums = weatherData.reduce(function(acc, cur){
         // iterate over location names
         Object.keys(cur).map(function(key){
             if(key in acc && key !== 'datetime'){
@@ -31,39 +32,39 @@ function generateReport(weatherData, variable, unit){
         return acc;
     }, {});
 
-    const meanTemps = Object.keys(tempSums).map(key => {
-        tempSums[key] /= weatherData.length;
-        return tempSums[key];
+    const means = Object.keys(sums).map(key => {
+        sums[key] /= weatherData.length;
+        return sums[key];
     });
 
-    // get warmest 10
-    meanTemps.sort((a, b) => b - a); // desc sort
+    // get highest 10
+    means.sort((a, b) => b - a); // desc sort
     retStr += `\nTop 10 Cities with highest mean ${variable}\n`;
     let count = 0;
-    meanTemps.map(temp => {
-        // find location in tempSums matching temp
+    means.map(temp => {
+        // find location in sums matching value
         if(count < 10){
-            const location = Object.keys(tempSums).find(key => tempSums[key] === temp);
+            const location = Object.keys(sums).find(key => sums[key] === temp);
             retStr += `${location}: ${temp.toFixed(2)} (${unit})\n`;
         }
         count += 1;
     });
     
-    // get coolest 10
-    meanTemps.sort((a, b) => a - b); // asc sort
+    // get lowest 10
+    means.sort((a, b) => a - b); // asc sort
     retStr += `\nTop 10 Cities with lowest mean ${variable}\n`;
     count = 0;
-    meanTemps.map(temp => {
-        // find location in tempSums matching temp
+    means.map(temp => {
+        // find location in sums matching value
         if(count < 10){
-            const location = Object.keys(tempSums).find(key => tempSums[key] === temp);
+            const location = Object.keys(sums).find(key => sums[key] === temp);
             retStr += `${location}: ${temp.toFixed(2)} (${unit})\n`;
         }
         count += 1;
     });
 
-    // Average New York temp in Spr 13
-    const sprTempSum = weatherData.reduce((acc, cur) => {
+    // Average in NY spr 13
+    const sprSum = weatherData.reduce((acc, cur) => {
         const date = new Date(cur['datetime']);
         if(date.getFullYear() === 2013 && date.getMonth() > 0 && date.getMonth() < 4){
             acc[0] += cur['New York'];
@@ -72,7 +73,7 @@ function generateReport(weatherData, variable, unit){
         return acc;
     }, [0, 0]);
 
-    retStr += `\nThe average ${variable} over spring 2013 in New York is: ${(sprTempSum[0]/sprTempSum[1]).toFixed(2)} (${unit}) \n`;
+    retStr += `\nThe average ${variable} over spring 2013 in New York is: ${(sprSum[0]/sprSum[1]).toFixed(2)} (${unit})`;
 
     return retStr;
 }
